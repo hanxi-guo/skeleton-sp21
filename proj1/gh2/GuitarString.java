@@ -32,7 +32,7 @@ public class GuitarString {
         int i = 0;
         while (i < buffer.size()) {
             double first = buffer.removeFirst();
-            double randomNum = Math.random()- 0.5;
+            double randomNum = Math.random() - 0.5;
             buffer.addLast(randomNum);
             i += 1;
         }

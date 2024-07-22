@@ -11,12 +11,12 @@ public class ArrayDeque<T> implements Deque<T> {
     // use head and tail instead of it
     private int head;
     private int tail;
-    private final int InitSize = 8;
+    private final int initSize = 8;
     private static final double MIN_USAGE_RATIO = 0.25;
 
 
     public ArrayDeque() {
-        this.array =  (T []) new Object[InitSize];
+        this.array = (T[]) new Object[initSize];
         this.size = 0;
         this.head = 0;
         this.tail = 0;
@@ -36,13 +36,13 @@ public class ArrayDeque<T> implements Deque<T> {
 
         array = newArray;
         head = 0;
-        tail = size ;
+        tail = size;
     }
 
     @Override
-    public void addFirst(T item){
-        if (size == array.length){
-            resize(size*2);
+    public void addFirst(T item) {
+        if (size == array.length) {
+            resize(size * 2);
         }
 
         head = (head - 1 + array.length) % array.length;
@@ -53,13 +53,12 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public void addLast(T item) {
         if (size == array.length) {
-            resize(size*2);
+            resize(size * 2);
         }
-        array[tail%array.length] = item;
+        array[tail % array.length] = item;
         tail = (tail + 1) % array.length;
         size++;
     }
-
 
 
     @Override
@@ -77,25 +76,25 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public T removeFirst() {
-        if (size == 0){
+        if (size == 0) {
             return null;
         }
-        int index = (head + 1 ) % array.length;
+        int index = (head + 1) % array.length;
         T t = array[head];
         array[head] = null;
         head = index;
         size--;
 
         // downsize the array when usage ratio is too small
-        if (size > InitSize && size < array.length * MIN_USAGE_RATIO) {
-            resize(array.length/2);
+        if (size > initSize && size < array.length * MIN_USAGE_RATIO) {
+            resize(array.length / 2);
         }
         return t;
     }
 
     @Override
     public T removeLast() {
-        if (size == 0){
+        if (size == 0) {
             return null;
         }
         // tail = nextLast, so we need to remove the one before it
@@ -106,7 +105,7 @@ public class ArrayDeque<T> implements Deque<T> {
         size--;
 
         // downsize the array when usage ratio is too small
-        if (size > InitSize && size < array.length * MIN_USAGE_RATIO) {
+        if (size > initSize && size < array.length * MIN_USAGE_RATIO) {
             resize(size);
         }
         return t;
@@ -123,12 +122,14 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     public Iterator<T> iterator() {
-        return new ArrayListIterator();
+        return new Iterable();
     }
 
-    public class ArrayListIterator implements Iterator<T> {
-        private int index ;
-        public ArrayListIterator(){index = 0;
+    private class Iterable implements Iterator<T> {
+        private int index;
+
+        public Iterable() {
+            index = 0;
         }
 
         @Override
@@ -138,7 +139,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
         @Override
         public T next() {
-            if (hasNext()){
+            if (hasNext()) {
                 return array[index++];
             }
             throw new NoSuchElementException();
@@ -147,21 +148,19 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public boolean equals(Object o) {
-        // Reference equality check, directly return true
-        if (this == o) return true;
-        if (o instanceof ArrayDeque) {
-            // type transferring
-            ArrayDeque<?> other = (ArrayDeque<?>) o;
-            if (size != other.size) return false;
-            for (int i = 0; i <= this.size; i++) {
-                T thisElement = this.array[i];
-                Object otherElement = other.array[i];
-                if (thisElement != otherElement){
-                    return false;
-                }
-            }
+        if (!(o instanceof Deque) || ((Deque<?>) o).size() != this.size()) {
+            return false;
+        }
+        if (o == this) {
             return true;
         }
-        return false;
+        ArrayDeque<?> other = (ArrayDeque<?>) o;
+        for (int i = 0; i < this.size(); i++) {
+            Object item = other.get(i);
+            if (!(this.get(i).equals(item))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
